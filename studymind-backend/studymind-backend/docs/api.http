@@ -1,0 +1,78 @@
+### StudyMind API smoke test.
+### Works with the "REST Client" extension in VS Code (click "Send Request" above each block).
+@host = http://localhost:8080
+
+### 1. Health (public): shows whether AI is configured
+GET {{host}}/api/health
+
+### 2. Register (returns a token) - copy the token into @token below
+POST {{host}}/api/auth/register
+Content-Type: application/json
+
+{ "email": "shrey@example.com", "password": "password123", "name": "Shrey", "program": "BTech CSE" }
+
+@token = PASTE_TOKEN_HERE
+
+### 3. Write the timetable in plain words; the AI works out the subjects
+PUT {{host}}/api/timetable
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "text": "Monday: 9-10 DBMS, 10-11 Operating Systems, 2-4 Machine Learning Lab\nTuesday: 9-10 Cloud Computing, 10-11 AI\nWednesday: 9-10 DBMS, 11-12 MAD" }
+
+### 4. Add an exam (a subject is created automatically from subjectName)
+POST {{host}}/api/exams
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "subjectName": "DBMS", "title": "DBMS Mid-sem", "examDate": "2026-11-25", "maxMarks": 100, "importance": 4 }
+
+### 5. Past result: marks obtained (feeds the "weak subject" logic)
+POST {{host}}/api/exams
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "subjectName": "AI", "title": "AI Quiz 1", "examDate": "2026-10-01", "maxMarks": 50, "obtainedMarks": 21 }
+
+### 6. Generate the study plan
+POST {{host}}/api/study-plan/generate
+Authorization: Bearer {{token}}
+
+### 7. Exam summary (how many, averages per subject)
+GET {{host}}/api/exams/summary
+Authorization: Bearer {{token}}
+
+### 8. Upload a PDF: use the frontend, or curl:
+###   curl.exe -H "Authorization: Bearer TOKEN" -F "file=@notes.pdf" http://localhost:8080/api/documents
+
+### 9. Create a chat and ask a question (replace CHAT_ID)
+POST {{host}}/api/chats
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{}
+
+###
+POST {{host}}/api/chats/CHAT_ID/messages
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "text": "What is the difference between 3NF and BCNF?" }
+
+### 10. Generate flashcards / a quiz from a document (replace DOC_ID)
+POST {{host}}/api/documents/DOC_ID/flashcards/generate
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "count": 12 }
+
+###
+POST {{host}}/api/documents/DOC_ID/quizzes/generate
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "count": 8, "difficulty": "medium" }
+
+### 11. Everything the Home screen needs
+GET {{host}}/api/dashboard
+Authorization: Bearer {{token}}

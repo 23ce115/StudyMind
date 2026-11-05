@@ -1,0 +1,47 @@
+server:
+  port: ${PORT:8080}
+
+spring:
+  application:
+    name: studymind-backend
+  datasource:
+    url: ${SUPABASE_DB_URL}
+    username: ${SUPABASE_DB_USER}
+    password: ${SUPABASE_DB_PASSWORD}
+    hikari:
+      maximum-pool-size: ${DB_POOL_SIZE:5}
+      connection-timeout: 10000
+  jpa:
+    hibernate:
+      ddl-auto: ${JPA_DDL_AUTO:update}
+    open-in-view: false
+  servlet:
+    multipart:
+      max-file-size: 25MB
+      max-request-size: 25MB
+
+app:
+  timezone: ${APP_TIMEZONE:Asia/Kolkata}
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration-minutes: ${JWT_EXPIRATION_MINUTES:10080}
+  cors:
+    allowed-origins: ${ALLOWED_ORIGINS:http://localhost:5173}
+  usage:
+    daily-question-limit: ${DAILY_QUESTION_LIMIT:50}
+
+supabase:
+  url: ${SUPABASE_URL:}
+  service-role-key: ${SUPABASE_SERVICE_ROLE_KEY:}
+  storage-bucket: ${SUPABASE_STORAGE_BUCKET:documents}
+
+ai:
+  provider: ${AI_PROVIDER:none}        # none | gemini | anthropic | openai
+  api-key: ${AI_API_KEY:}
+  model: ${AI_MODEL:gemini-2.5-flash}
+
+logging:
+  level:
+    root: INFO
+    org.apache.pdfbox: ERROR
+    org.apache.fontbox: ERROR
